@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Hair by Ofelia - Map</title>
+   <?php include("include/htmlheader.php"); ?>
+  
+</head>
+<body id="page3">
+ 
+ <?php include("include/navigation.php"); ?>
+ 
+ <?php include("include/header.php"); ?>
+ 
+ <div id="map">
+     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_2WeEzJq4Gu_u1FguIi7XWodiODm85uk&callback=initMap">
+
+     </script>
+     <script type="text/javascript" >
+        google.maps.event.addDomListener(window, "load", initMap);
+     </script>
+            
+ </div>
+
+ <?php include("include/footer.php");?>
+
+</body>
+</html>
