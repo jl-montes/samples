@@ -1,0 +1,23 @@
+---
+- hosts: "{{hosts}}"
+  gather_facts: false
+  become: true
+  tasks:
+  - name: Stop dcos-mesos-slave service 
+    service: name=dcos-mesos-slave state=stopped
+    ignore_errors: yes
+  
+  - name: Stop dcos-mesos-slavei-public service 
+    service: name=dcos-mesos-slave-public state=stopped
+    ignore_errors: yes
+  
+  - name: Remove executors file
+    file: path=/var/lib/mesos/slave/meta/slaves/latest state=absent
+    ignore_errors: yes
+  
+  - name: Start dcos-mesos-slave service
+    service: name=dcos-mesos-slave state=started
+    ignore_errors: yes
+
+  - name: Start dcos-mesos-slave-public service
+    service: name=dcos-mesos-slave-public state=started

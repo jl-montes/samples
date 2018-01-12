@@ -1,0 +1,33 @@
+{
+  "id": "frontend-poller-TIMESTAMP",
+  "cpus": 1,
+  "mem": 1024.0,
+  "instances": 1,
+  "uris": [
+    "file:///docker.tar.gz"
+  ],
+  "constraints": [
+    [
+      "hostname",
+      "UNIQUE"
+    ]
+  ],
+  "env": {
+          "MON_APP": "frontend-poller", 
+		  "MON_GROUP": "platform", 
+		  "MON_PIPE_ID": "datax"
+  },
+  "acceptedResourceRoles": [
+    "slave_public"
+  ],
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "{PROVISION_SERVER_IP}:9000/montana/{POLLER_VERSION}",
+      "network": "HOST"
+    }
+  },
+  "labels": {
+    "global": "true"
+  }
+}

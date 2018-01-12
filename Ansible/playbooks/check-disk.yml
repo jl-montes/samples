@@ -1,0 +1,12 @@
+---
+- hosts: "{{hosts}}"
+  user: montana
+  become: yes
+  gather_facts: false
+
+  tasks:
+  - name: Check disk consumption
+    script: files/check-disk.sh
+    register: result
+  - debug: var=result.stdout_lines
+    when: result.rc != 0

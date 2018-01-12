@@ -1,0 +1,14 @@
+---
+- hosts: "{{hosts}}"
+  remote_user: montana
+  become: yes
+  become_method: sudo
+  vars:
+    ACCT: "{{acct}}" #account folder where ssh keys are stored, that will be added to montana acct on remote host
+    skey: "{{skey}}" # ssh key name for single person that is stored in sshkey folder
+  tasks:
+   - name: Add ssh key from {{ACCT}} folder to -> montana@{{hosts}}
+     authorized_key: user=montana  key="{{ lookup('file',item) }}"
+     with_fileglob:
+       - files/sshkeys/{{ACCT}}/.ssh/{{skey}}
+

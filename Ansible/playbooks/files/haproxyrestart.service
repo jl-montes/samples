@@ -1,0 +1,7 @@
+[Unit]
+Description=HAProxy restart service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/systemctl restart haproxy
+

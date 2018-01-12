@@ -1,0 +1,28 @@
+---
+- hosts: "{{hosts}}"
+  become: true 
+  vars:
+     journalfile: /home/montana/{{ansible_cbr0.ipv4.address}}-journalctl-logs-{{ansible_date_time.date}}.txt
+     tarfile:      /home/montana/{{ansible_cbr0.ipv4.address}}-journal-logs-{{ansible_date_time.date}}.tgz
+     logstore: /opt/montana/logs
+  tasks:
+
+
+  - name:  Collect logs and tar 
+    shell: "{{item}}"
+    with_items:
+      - journalctl  > {{journalfile}}
+      - tar cvzf {{tarfile}} {{journalfile}}
+      - rm -v {{journalfile}}
+    register: result
+    ignore_errors: true 
+   
+  - name: Create if {{logstore}} does not exist
+    delegate_to:  127.0.0.1
+    file: path={{logstore}} state=directory mode=0755
+
+  - name: Fetching log files, placing them on Ansible node -> {{logstore}}
+    fetch: dest={{logstore}} src={{tarfile}}
+    register: result
+
+

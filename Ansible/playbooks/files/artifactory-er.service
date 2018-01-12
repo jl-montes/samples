@@ -1,0 +1,17 @@
+[Unit]
+Description=Laniakea Artifactory Enterprise Registry
+After=docker.service
+ 
+
+[Service]
+EnvironmentFile=/etc/environment
+ExecStartPre=-/usr/bin/docker kill artifactory-er
+ExecStartPre=-/usr/bin/docker rm -v artifactory-er
+ExecStart=/usr/bin/docker run --name artifactory-er -p 82:80 -p 8082:8081 -p 444:443 -p 9001-9010:9001-9010 -v /opt/montana/services/core/enterprise-registry/config:/conf/stack -v /opt/montana/store/artifactory/data:/opt/montana/store/artifactory/data -v /opt/montana/store/artifactory/logs:/opt/montana/store/artifactory/logs -v /opt/montana/store/artifactory/backup:/opt/montana/store/artifactory/backup -v /opt/montana/store/artifactory/etc:/opt/montana/store/artifactory/etc -v /opt/montana/store/mysql:/opt/montana/store/mysql --privileged=true ${ARTIFACTORY_IMAGE_VERSION}
+
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+

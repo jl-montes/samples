@@ -1,0 +1,55 @@
+---
+- hosts: es
+  become: true
+  tasks:
+  - name: Check for read-only elasticsearch volumes
+    shell: "mount | grep  -e elastic"
+    register: result
+    failed_when: '"ro," in result.stdout or result.rc == 1'
+  - debug: var=result.stdout
+ 
+- hosts: kafka 
+  become: true
+  tasks:
+  - name: Check for read-only kafka volumes
+    shell: "mount | grep  -e kafka"
+    register: result
+    failed_when: '"ro," in result.stdout or result.rc == 1'
+  - debug: var=result.stdout
+
+- hosts: scaleio-dcos  
+  become: true
+  tasks:
+  - name: Check for read-only dcos volumes
+    shell: "mount | grep  -e 'dcos/volume0'"
+    register: result
+    failed_when: '"ro," in result.stdout or result.rc == 1'
+  - debug: var=result.stdout
+
+- hosts: ssre-test
+  become: true
+  tasks:
+  - name: Check for read-only ssre-test volumes
+    shell: "mount | grep  -e ssre_test"
+    register: result
+    failed_when: '"ro," in result.stdout or result.rc == 1'
+  - debug: var=result.stdout
+
+- hosts: visp-cassandra
+  become: true
+  tasks:
+  - name: Check for read-only visp-cassandra volumes
+    shell: "mount | grep  -e dcos_cassandra"
+    register: result
+    failed_when: '"ro," in result.stdout or result.rc == 1' 
+  - debug: var=result.stdout
+
+- hosts: swat
+  become: true
+  tasks:
+  - name: Check for read-only swat volumes
+    shell: "mount | grep  -e swat"
+    register: result
+    failed_when: '"ro," in result.stdout or result.rc == 1'
+  - debug: var=result.stdout
+

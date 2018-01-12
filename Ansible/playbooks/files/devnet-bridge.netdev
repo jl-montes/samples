@@ -1,0 +1,4 @@
+[NetDev]
+Kind=bridge
+Name=cbr1
+

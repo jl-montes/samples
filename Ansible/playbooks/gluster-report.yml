@@ -1,0 +1,9 @@
+---
+- hosts: 10.200.69.1
+  user: montana
+  become: yes
+  tasks:
+  - name: Getting Gluster reporting info
+    script: files/gluster-report.sh
+    register: result
+  - debug: var=result.stdout_lines

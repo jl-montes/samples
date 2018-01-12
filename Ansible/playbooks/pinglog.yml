@@ -1,0 +1,12 @@
+---
+- hosts: "{{hosts}}"
+  gather_facts: false
+  #vars:
+  #   pinglog: pinglog-{{ansible_date_time.date}}.txt 
+  tasks:
+  - name: Ansible ping all nodes
+    register: result
+    #failed_when: result.rc != 0
+    ping:
+
+#  - debug: var=result

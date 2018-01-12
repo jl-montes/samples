@@ -1,0 +1,68 @@
+---
+#- hosts: "{{hosts}}"
+- hosts: ts-build01.verizon.com
+  user: jmontes
+  become: yes
+
+  tasks:
+  - name: Check dcconnect connectivity - Impacts user on-boarding and updates when down
+    register: result
+    ignore_errors: true
+    uri: 
+      url: "{{item}}" 
+      return_content: yes
+      status_code: 200
+      timeout: 10
+    with_items:
+     - https://dcconnect-irving.verizon.com
+     - https://dcconnect-irving.verizon.com:8443
+     #- https://dcconnect-irving.verizon.com:8444 
+     - https://dcconnect-twb-dit.verizon.com
+     - https://dcconnect-twb-dit.verizon.com:8443
+     - https://dcconnect-magellan.verizon.com
+     - https://dcconnect-magellan.verizon.com:8443
+     - https://dcconnect-magellan.verizon.com:8444
+     - https://dcconnect-perryman.verizon.com
+     - https://dcconnect-perryman.verizon.com:8443
+     #- https://dcconnect-perryman.verizon.com:8444
+     - https://dcconnect-omaha.verizon.com
+     - https://dcconnect-omaha.verizon.com:8443
+     #- https://dcconnect-omaha.verizon.com:8444
+     - https://dcconnect-rocklin.verizon.com
+     - https://dcconnect-rocklin.verizon.com:8443
+     - https://dcconnect-rocklin.verizon.com:8444
+     - https://dcconnect-twinsburg.verizon.com
+     - https://dcconnect-twinsburg.verizon.com:8444
+     - https://dcconnect-ewalukauna.verizon.com
+     - https://dcconnect-ewalukauna.verizon.com:8444 
+     - https://dcconnect-tampa.verizon.com
+     - https://dcconnect-tampa.verizon.com:8443
+     - https://dcconnect-tpa2.verizon.com
+     - https://dcconnect-tpa2.verizon.com:8443
+
+#  - debug: var=result 
+
+  - name: Check mgmnt server access via port 9090
+    uri: 
+      url: "{{item}}" 
+      return_content: yes
+      status_code: 200
+      timeout: 10
+      ignore_errors: true
+    with_items:
+     - http://irv-laniakea.verizon.com:9090
+     #- http://198.159.138.250:9090
+     - http://140.223.87.250:9090
+     - http://twinsburg-dit.verizon.com:9090
+     - http://burlington-dit-laniakea.verizon.com:9090
+     - http://tpa1.verizon.com:9090
+     - http://tpa2.verizon.com:9090
+  
+  - name: Check ER access via port 9004
+    uri: 
+      url: "{{item}}" 
+      return_content: yes
+      status_code: 200
+      timeout: 10
+    with_items:
+     - http://irv-laniakea.verizon.com:9004

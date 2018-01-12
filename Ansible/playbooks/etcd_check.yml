@@ -1,0 +1,12 @@
+---
+#- hosts:  10.200.130.1
+- hosts:  coreos 
+  user: montana
+  become: yes
+  gather_facts: false
+  tasks:
+  - name: Run etcd test commands
+    script: files/etcd_check.sh
+    register: result
+  - debug: var=result.stdout_lines
+

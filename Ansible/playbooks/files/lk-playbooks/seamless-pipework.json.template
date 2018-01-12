@@ -1,0 +1,65 @@
+{
+  "id": "frontend-pipework-TIMESTAMP",
+  "cpus": 1,
+  "mem": 1024.0,
+  "instances": 1,
+  "uris": [
+    "file:///docker.tar.gz"
+  ],
+  "constraints": [
+    [
+      "hostname",
+      "UNIQUE"
+    ]
+  ],
+  "acceptedResourceRoles": [
+    "slave_public"
+  ],
+  "env": {
+	"MON_APP": "frontend-pipework",
+	"MON_GROUP": "platform",
+	"MON_PIPE_ID": "datax",
+    "QUAGGASERVERPORT": ":8080",
+    "SERVERPORT": ":18080",
+    "DYNFWSERVERPORT": ":18090",
+    "APACHE":"{PROVISION_SERVER_IP}"
+  },
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "{PROVISION_SERVER_IP}:9000/montana/{PIPEWORK_VERSION}",
+      "network": "HOST",
+      "privileged": true
+    },
+    "volumes": [
+      {
+        "hostPath": "/var/run",
+        "containerPath": "/var/run",
+        "mode": "RW"
+      },
+      {
+        "hostPath": "/usr/bin/fleetctl",
+        "containerPath": "/usr/bin/fleetctl",
+        "mode": "RW"
+      },
+      {
+        "hostPath": "/proc",
+        "containerPath": "/corp",
+        "mode": "RW"
+      },
+      {
+        "hostPath": "/sys",
+        "containerPath": "/sys",
+        "mode": "RW"
+      },
+      {
+         "hostPath": "/etc",
+         "containerPath": "/dcte",
+         "mode": "RW"
+      }
+    ]
+  },
+  "labels": {
+    "global": "true"
+  }
+}

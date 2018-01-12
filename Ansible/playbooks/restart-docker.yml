@@ -1,0 +1,42 @@
+---
+- hosts: "{{hosts}}"
+  become: true 
+  vars:
+     logfile: /home/montana/{{ansible_cbr0.ipv4.address}}-dockerlogs-{{ansible_date_time.date}}.txt
+     tarfile: /home/montana/{{ansible_cbr0.ipv4.address}}-dockerlogs-{{ansible_date_time.date}}.tgz
+  tasks:
+
+  - name: Get docker info 
+    shell: docker info
+    register: result
+    ignore_errors: true 
+  - debug: var=result.stdout_lines
+
+  - name: Get docker version
+    shell: docker version
+    register: result
+    ignore_errors: true
+  - debug: var=result.stdout_lines
+
+  - name: Get docker status 
+    shell: systemctl status docker
+    register: result
+    ignore_errors: true
+  - debug: var=result.stdout_lines
+
+  - name:  Collect logs and tar 
+    shell: "{{item}}"
+    with_items:
+      - journalctl --since=today > {{logfile}}
+      - tar cvzf {{tarfile}}  {{logfile}}
+      - rm -v {{logfile}}
+    register: result
+    ignore_errors: true 
+
+  - name: Restart Docker
+    service: name=docker state=restarted
+    register: result
+  - debug: var=result.stdout_lines
+
+
+

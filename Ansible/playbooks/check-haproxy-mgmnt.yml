@@ -1,0 +1,6 @@
+---
+- hosts: prov
+  roles:
+   - check-haproxy-mgmnt
+
+

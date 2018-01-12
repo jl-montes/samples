@@ -1,0 +1,8 @@
+[Match]
+Name=eno2
+
+[Network]
+Address=198.159.192.102/23
+Gateway=198.159.192.1
+DNS=166.68.227.10
+DNS=166.68.195.10

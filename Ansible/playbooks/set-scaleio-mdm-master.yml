@@ -1,0 +1,14 @@
+---
+- hosts: 10.200.107.1
+  tasks:
+  - name: Set primary MDM in case the Secondary MDM is active
+    shell: "{{item}}"
+    with_items:
+    -  /opt/bin/scli --login --username **getFromSecrets**  --password **getFromSecrets**  --use_nonsecure_communication
+    -  /opt/bin/scli --switch_mdm_ownership --new_master_mdm_ip 10.200.73.1 --use_nonsecure_communication
+    register: result
+    ignore_errors: true
+  
+  - debug: var=result.stdout_lines  
+
+

@@ -1,0 +1,2 @@
+mon-test-ecs-s3:v3.0
+

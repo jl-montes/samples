@@ -1,0 +1,65 @@
+---
+- hosts: prov:tpa1-prov:tpa2-prov:twb-dit-prov:bur-prov
+  become: true 
+  gather_facts: False
+ 
+  tasks:
+
+  - name: Check/start LK-Mgmnt services if not running 
+    service: name={{item}} state=started
+    register: result
+    with_items:
+    - pxe
+    - apache
+    - rest
+    - postgres
+    - er-jfrog
+    - coreupdate
+
+- hosts: tpa2-prov:twb-dit-prov:bur-prov
+  tasks:
+  - name: Check mesos-dns resolution
+    ignore_errors: true
+    register: result
+    shell: ping -c 2 {{item}}
+    with_items:
+    - leader.mesos
+    - marathon.mesos
+    - mon-marathon-service-platform.marathon.mesos 
+
+- hosts: prov:tpa1-prov
+  tasks:
+  - name: Check mesos-dns resolution Irving and Tampa1 Only
+    ignore_errors: true
+    register: result
+    shell: ping -c 2 {{item}}
+    with_items:
+    - leader.mesos
+    - marathon.mesos
+    - mon-marathon-service.marathon.mesos
+
+
+- hosts: prov:tpa1-prov
+  become: true 
+
+  tasks:
+
+  - name: Start LK-Mgmnt services if not running - Irving-Lab and Tampa1 Only
+    service: name={{item}} state=started
+    register: result
+    with_items:
+    - redis
+    - firewall
+
+- hosts: irlk-sds
+  become: true 
+  gather_facts: False
+ 
+  tasks:
+  - name: Start Scalio services if not running 
+    service: name={{item}} state=started
+    register: result
+    with_items:
+    - sdc
+    - sds
+  

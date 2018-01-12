@@ -1,0 +1,13 @@
+[Unit]
+Description=CoreOS Setup for Ansible
+
+
+[Service]
+Type=simple
+ExecStartPre=-/usr/bin/wget -O /home/montana/pypy-files.tar 10.200.1.1/jmontes/pypy-files.tar
+ExecStart=/usr/bin/tar xvf /home/montana/pypy-files.tar -C /home/montana/
+ExecStop=/usr/bin/rm -v /home/montana/pypy-files.tar 
+
+[X-Fleet]
+Global=true
+#MachineMetadata=MAC=<MAC_ID>

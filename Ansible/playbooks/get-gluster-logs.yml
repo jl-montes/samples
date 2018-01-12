@@ -1,0 +1,11 @@
+---
+- hosts: "{{hosts}}"
+#- hosts: irlk-gluster
+#- hosts: 10.200.69.1
+  user: montana
+  become: yes
+  tasks:
+  - name: Getting Gluster docker logs 
+    script: files/get-gluster-logs.sh
+    register: result
+  - debug: var=result.stdout_lines

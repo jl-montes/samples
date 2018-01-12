@@ -1,0 +1,19 @@
+---
+#  vars:
+#    pinglog : abc
+#- import_playbook: check-laniakea-services.yml
+
+- import_playbook: pinglog.yml -e hosts=coreos
+- import_playbook: check-mgmnt-services.yml
+- import_playbook: check-mesos-leadership.yml
+- import_playbook: check-haproxy-mgmnt.yml
+- import_playbook: check-scaleio-volumes.yml 
+#- import_playbook: scaleio-mdm-report-2.0.yml
+- import_playbook: check-scaleio-report.yml
+#- import_playbook: gluster-report.yml
+- import_playbook: check-mgnt-timeservice.yml
+- import_playbook: check-jfrog.yml 
+- import_playbook: check-ntp.yml -e hosts=coreos
+- import_playbook: check-docker.yml -e hosts=coreos
+- import_playbook: check-disk.yml -e hosts=coreos
+- import_playbook: check-dcconnect-ports.yml
