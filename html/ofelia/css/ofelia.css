@@ -1,0 +1,155 @@
+html {
+	 /*background-color: #e6e6e6;*/
+	 background-color: #50394c;
+    margin-left: 20%;
+    margin-right: 20%;
+  	 height: 100%;
+	  /*background-color: #d4d4f7;*/	 
+}
+div {
+	border-style: none;
+}
+body {
+  /*background: #d4d4f7;*/
+  background: #50394c;
+  height: 100%; 
+  margin: 0;
+  padding: 0;
+    
+}
+nav {
+    border-style: none;
+    margin: 0;
+    padding: 0;
+    clear: right;
+    font-family: Verdana, Geneva, sans-serif;    
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #f4e1d2;        
+}
+
+nav li {
+	float: left;
+	
+}
+
+nav li a {
+    display: block;
+    text-decoration: none;
+    color: #3c2a39;
+    text-align: center;
+    padding: 12px 14px;  
+}
+
+nav ul li a:link {display: block;}
+nav ul li a:visited {display: block;}
+nav ul li a:hover {display: block; border: thin solid white; background-color: #f8eee7; color: #3c2a39;font-weight: bold;}
+nav ul li a:active {display: block;}
+/*nav ul li a:active {display: block;background-color: #f8eee7; color: #3c2a39; font-weight: bold;}*/
+
+nav ul li#iamhere a,
+nav ul li#iamhere a:link,
+nav ul li#iamhere a:visited,
+nav ul li#iamhere a:hover { background-color: #f8eee7; border: thin solid white; color: #3c2a39;}
+
+
+#phone ul li { margin:0; padding: 0;}
+#phone a:link { color: #f8eee7; }
+#phone a:hover {display: block; border: thin solid white; background-color: #f8eee7; color: #3c2a39;}
+ 
+ul {
+  list-style-type: none;
+  padding: 0;  
+}
+
+#salon-name {
+  margin: 15px 0 0 0; 
+}
+
+#salon-name h1, h2 {
+  font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
+  /*font-family: Verdana, Geneva, sans-serif*/
+  color: #f8eee7;
+  padding-left: 16px;
+  /*color:#fff;*/
+  background:#50394c;
+  
+}
+
+#salon-name h1 {
+  font-size: 2em;	
+  margin: 0; 
+}
+
+#salon-name h2 {
+  margin: 0;
+  /*color: #f8eee7;*/  
+}
+
+#pics {
+ padding: 0;
+ margin-left: auto;
+ margin-right: auto;
+ text-align: center;	
+}
+
+#pics img {
+	margin-top: 20px;
+	vertical-align: middle;
+	display: inline-block;	
+}
+
+#location {
+  width: 35%;
+  margin: 0;
+  /*margin: 100px 0 0 0;*/
+  /*margin-left: 0;*/
+  padding: 0;
+}
+
+#address, #salonhours {
+  font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
+  font-size: 1em;
+  color: #f8eee7;
+  margin-left: 20px;  
+  background: #513951;  
+}
+
+#services {
+	width: 35%;
+	margin: 20px 0 0 0;
+	background: #513951;
+	color: #f8eee7;
+	padding-left: 30px;
+}
+
+#servicelist li {
+	list-style-type: circle;
+	margin: 0 0 0 30px;
+}
+#services h2 {
+  text-decoration: underline #f8eee7;
+  margin: 0;       
+}
+#map {
+    /*float: right;*/
+    margin: 30px 0 0 30px;
+    padding: 0;
+    height: 350px;
+    width: 60%;
+}
+#footermain {
+	/*float: left;
+   /overflow: auto;
+   clear: left;*/
+}
+footer {
+  border-style: none;
+  margin-top: 60px;   
+  overflow: auto;
+}
