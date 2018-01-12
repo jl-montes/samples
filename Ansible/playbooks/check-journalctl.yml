@@ -1,0 +1,13 @@
+---
+- hosts: "{{hosts}}"
+ 
+  tasks:
+  - name: Verify journalctl logs and integrity
+    shell: sudo journalctl --verify
+    register: result
+    failed_when: '"File corruption detected" in result.stderr'
+  #  ignore_errors: true 
+  #- debug: var=result
+  #- name: Restart dcos-marathon when leadership confusion is occurring
+  #  service: name=dcos-marathon state=restarted 
+  #  when: '"Waiting for consistent leadership state. Are we leader" in result.stdout'

@@ -1,0 +1,21 @@
+---
+- hosts: "{{hosts}}"
+  become: true 
+  vars:
+     glusterlog:  /home/montana/{{ansible_cbr0.ipv4.address}}-gluster-{{ansible_date_time.date}}.txt
+     tarfile:     /home/montana/{{ansible_cbr0.ipv4.address}}-glusterlogs-{{ansible_date_time.date}}.tgz
+  tasks:
+
+  - name: get gluster service name
+    shell: systemctl | grep gluster_deploy_test | grep running | awk '{ print $1}'
+    register: result
+
+  - name:  Collect logs and tar 
+    shell: "{{item}}"
+    with_items:
+      - journalctl -u {{result.stdout_lines[0]}}  > {{glusterlog}}
+      - tar cvzf {{tarfile}} {{glusterlog}}
+      - rm -v {{glusterlog}} 
+    register: result
+    ignore_errors: true 
+   

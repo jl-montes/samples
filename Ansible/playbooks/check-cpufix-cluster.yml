@@ -1,0 +1,15 @@
+---
+- hosts: coreos
+  user: montana
+  become: Yes
+  gather_facts: no 
+  tasks:
+  - name: Check 00-cpuset_fix.conf (Cluster Nodes)
+    lineinfile: >
+                dest="/etc/systemd/system/docker.service.d/00-cpuset_fix.conf"
+                state=present
+                regexp="echo 0-\$\(expr \$\(nproc\) - 1\)"
+                line="ExecStartPre=-/usr/bin/sh -c '/usr/bin/echo 0-$(expr $(nproc) - 1) > /sys/fs/cgroup/cpuset/system.slice/cpuset.cpus'"
+
+
+

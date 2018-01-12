@@ -1,0 +1,29 @@
+---
+- hosts: "{{hosts}}"
+  become: true
+  vars:
+     logfile: /home/montana/{{ansible_cbr0.ipv4.address}}-dockerlogs-{{ansible_date_time.date}}.txt
+     tarfile: /home/montana/{{ansible_cbr0.ipv4.address}}-dockerlogs-{{ansible_date_time.date}}.tgz 
+ 
+  tasks:
+
+  - block:
+    - debug: msg="Check for sleppy docker instance - 20 second timeout"
+    - shell: docker ps
+      register: result
+      async: 20
+      poll: 5
+    rescue:
+    - shell: "{{item}}"
+      with_items:
+        - journalctl --since=today > {{logfile}}
+        - tar cvzf {{tarfile}}  {{logfile}}
+        - rm -v {{logfile}}
+    - service: name=docker state=restarted 
+    - debug: msg="Docker service restarted"
+
+  
+   
+
+
+

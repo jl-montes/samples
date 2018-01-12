@@ -1,0 +1,22 @@
+---
+- hosts: irlk-fe-devnet
+  user: montana
+  become: yes
+  vars:
+    nic_name: eno2
+  tasks:
+  - name: Print msg
+    debug: msg="Creating BGP Network interface {{nic_name}} file for bgp_ip={{bgp_ip}}"
+
+
+  - name: Create {{nic_name}}.network file
+    copy: src=files/devnet-bgp.network dest=/etc/systemd/network/{{nic_name}}.network
+
+
+  - name: Edit IP address in {{nic_name}}.network file
+    lineinfile: dest=/etc/systemd/network/{{nic_name}}.network regexp="Address=" line=Address={{bgp_ip}}/18 state=present
+
+
+  - name: Restart systemd-networkd
+    command: systemctl restart systemd-networkd
+

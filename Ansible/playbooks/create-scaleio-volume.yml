@@ -1,0 +1,76 @@
+---
+
+# Run from Primary MDM
+- hosts: "{{mdm}}"
+  tasks: 
+  - name: Check if volume exists
+    shell: "{{item}}"
+    with_items: 
+    -  /opt/bin/scli --login --username **getFromSecrets** --password **getFromSecrets** --use_nonsecure_communication
+    -  /opt/bin/scli --query_volume --volume_name {{vol}} --use_nonsecure_communication
+    register: result
+    ignore_errors: true
+  - debug: var=result.stdout_lines
+ 
+  - name: If volume does not exist, create
+    shell: "{{item}}"
+    with_items:
+    - /opt/bin/scli --add_volume --size_gb {{size}} --volume_name {{vol}}  --storage_pool_name {{sp}} --protection_domain_name {{pd}} --use_nonsecure_communication
+    - /opt/bin/scli --map_volume_to_sdc --volume_name {{vol}} --sdc_ip {{sdc}} --use_nonsecure_communication
+    when: result | failed
+    register: result2
+    ignore_errors: true
+  - debug: var=result2.stdout_lines
+
+  - pause: seconds=5
+
+  - name: Get ScaleIO Volume ID
+    shell: /opt/bin/scli --query_volume --volume_name {{vol}}  --use_nonsecure_communication | grep "Volume ID" | cut -d ' ' -f4
+    register: volid
+  - debug: var=volid.stdout
+  - set_fact: VolumeID={{volid.stdout}} 
+
+#SDC Related Tasks
+- hosts: "{{sdc}}"
+  become: true
+  tasks:
+  - name: Get disk info from SDS
+    shell: "ls  /dev/disk/by-id/*{{hostvars['10.200.73.1'].VolumeID}}"
+    #shell: "ls  /dev/disk/by-id/*{{hostvars['10.200.107.1'].VolumeID}}"
+    register: diskid
+  - debug: var=diskid.stdout
+  
+  - set_fact: dsize={{size}}000
+  - set_fact: mount_file={{ mpoint | regex_replace('^[\/]{1}') | replace("/","-") }}.mount  
+  
+  - name: Setup local disk and filesystem
+    shell: "{{item}}"
+    with_items: 
+      -  parted -s {{diskid.stdout}} mklabel gpt
+      -  parted -s {{diskid.stdout}} mkpart primary 0 {{dsize}}
+      -  partprobe {{diskid.stdout}}-part1
+      -  partprobe {{diskid.stdout}}
+      -  mkfs.ext4 {{diskid.stdout}}-part1
+    ignore_errors: true
+
+  - name: Create mount file
+    copy: src=files/opt-montana-logging-elasticsearch-data.mount  dest=/etc/systemd/system/{{mount_file}}
+    
+  - name: Edit mount file
+    ini_file: dest=/etc/systemd/system/{{mount_file}}  section={{item.section}} option={{item.option}} value={{item.value}} 
+    with_items:
+     - { section: 'Mount', option: 'What'  , value: '{{diskid.stdout}}-part1' }  
+     - { section: 'Mount', option: 'Where' , value: '{{mpoint}}' } 
+
+  - name: Make directory
+    file: path={{mpoint}}  state=directory owner=montana group=montana 
+  
+ 
+  - name: Enable mount file srvice
+    shell: "{{item}}"
+    with_items: 
+      - systemctl daemon-reload
+      - systemctl enable /etc/systemd/system/{{mount_file}}
+      #- systemctl start  /etc/systemd/system/opt-montana-logging-elasticsearch-data
+      - systemctl start {{mount_file}}
+

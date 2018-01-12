@@ -1,0 +1,41 @@
+---
+- hosts: "{{hosts}}"
+  become: true 
+  vars:
+     exhibitor:    /home/montana/{{ansible_cbr0.ipv4.address}}-exhibitor-logs-{{ansible_date_time.date}}.txt
+     tarfile:      /home/montana/{{ansible_cbr0.ipv4.address}}-exhibitor-logs-{{ansible_date_time.date}}.tgz
+  tasks:
+
+  - name: Get docker info 
+    shell: docker info
+    register: result
+    ignore_errors: true 
+  - debug: var=result.stdout_lines
+
+  - name: Get docker version
+    shell: docker version
+    register: result
+    ignore_errors: true
+  - debug: var=result.stdout_lines
+
+  - name: Get docker status 
+    shell: systemctl status docker
+    register: result
+    ignore_errors: true
+  - debug: var=result.stdout_lines
+  
+  - name: run docker ps
+    shell: docker ps
+    register: result
+    ignore_errors: true
+  - debug: var=result.stdout_lines
+
+  - name:  Collect logs and tar 
+    shell: "{{item}}"
+    with_items:
+      - journalctl -u dcos-exhibitor  > {{exhibitor}}
+      - tar cvzf {{tarfile}}  {{exhibitor}}
+      - rm -v {{exhibitor}}
+    register: result
+    ignore_errors: true 
+   

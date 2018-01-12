@@ -1,0 +1,53 @@
+---
+- hosts: "{{hosts}}"
+  become: true 
+  vars:
+     mesosfile:    /home/montana/{{ansible_cbr0.ipv4.address}}-mesos-master-logs-{{ansible_date_time.date}}.txt
+     marathonfile: /home/montana/{{ansible_cbr0.ipv4.address}}-dcos-marathon-logs-{{ansible_date_time.date}}.txt
+     tarfile:      /home/montana/{{ansible_cbr0.ipv4.address}}-logs-{{ansible_date_time.date}}.tgz
+     logstore: /opt/montana/logs
+  tasks:
+
+  - name: Get docker info 
+    shell: docker info
+    register: result
+    ignore_errors: true 
+  - debug: var=result.stdout_lines
+
+  - name: Get docker version
+    shell: docker version
+    register: result
+    ignore_errors: true
+  - debug: var=result.stdout_lines
+
+  - name: Get docker status 
+    shell: systemctl status docker
+    register: result
+    ignore_errors: true
+  - debug: var=result.stdout_lines
+  
+  - name: run docker ps
+    shell: docker ps
+    register: result
+    ignore_errors: true
+  - debug: var=result.stdout_lines
+
+  - name:  Collect logs and tar 
+    shell: "{{item}}"
+    with_items:
+      - journalctl -u dcos-mesos-master  > {{mesosfile}}
+      - journalctl -u dcos-marathon > {{marathonfile}}
+      - tar cvzf {{tarfile}} {{mesosfile}} {{marathonfile}}
+      - rm -v {{mesosfile}} {{marathonfile}}
+    register: result
+    ignore_errors: true 
+   
+  - name: Create if {{logstore}} does not exist
+    delegate_to:  127.0.0.1
+    file: path={{logstore}} state=directory mode=0755
+
+  - name: Fetching log files, placing them on Ansible node -> {{logstore}}
+    fetch: dest={{logstore}} src={{tarfile}}
+    register: result
+
+

@@ -1,0 +1,61 @@
+{
+  "id": "frontend-quagga-TIMESTAMP",
+  "cpus": 1,
+  "mem": 1024.0,
+  "instances": 1,
+  "uris": ["file:///docker.tar.gz"],
+  "constraints": [["hostname","UNIQUE"]],
+  "acceptedResourceRoles": ["slave_public"],
+  "env": {
+		"MON_APP": "frontend-quagga",
+		"MON_GROUP": "platform",
+		"MON_PIPE_ID": "datax",
+        "QUAGGASERVERPORT": ":8080",
+        "PIPEWORKSERVERPORT": ":18080",
+        "DYNFWSERVERPORT": ":18090"
+  },
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "{PROVISION_SERVER_IP}:9000/montana/{QUAGGA_VERSION}",
+      "network": "HOST",
+      "privileged": true
+    },
+    "volumes": [
+      {
+         "hostPath": "/home/montana",
+         "containerPath": "/host",
+         "mode": "RW"
+      },
+      {
+         "hostPath": "/etc/fleet/fleet.conf",
+         "containerPath": "/etc/fleet/fleet.conf",
+         "mode": "RW"
+      },
+      {
+         "hostPath": "/var/run/fleet.sock",
+         "containerPath": "/var/run/fleet.sock",
+         "mode": "RW"
+      },
+      {
+         "hostPath": "/usr/bin/fleetctl",
+         "containerPath": "/usr/bin/fleetctl",
+         "mode": "RW"
+      },
+      {
+         "hostPath": "/var/run/docker.sock",
+         "containerPath": "/var/run/docker.sock",
+         "mode": "RW"
+      },
+      {
+         "hostPath": "/etc",
+         "containerPath": "/dcte",
+         "mode": "RW"
+      }
+    ]
+  },
+  "labels": {
+    "global": "true"
+  }
+}
+

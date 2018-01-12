@@ -1,0 +1,34 @@
+---
+#- hosts: 10.200.107.1
+- hosts: 10.200.73.1
+  user: montana
+  become: yes
+  gather_facts: false
+
+  tasks:
+
+  - name: ScaleIO MDM login 
+    shell: /opt/bin/scli --login --username **getFromSecrets** --password **getFromSecrets**  --use_nonsecure_communication 
+    register: result
+  
+  - name: Query All SDS
+    shell: /opt/bin/scli --query_all_sds  --use_nonsecure_communication
+    register: result
+  - debug: var=result.stdout_lines
+
+  - name: Query All SDC
+    shell: /opt/bin/scli --query_all_sdc  --use_nonsecure_communication
+    register: result
+  - debug: var=result.stdout_lines
+
+  - name: Query All Volumes
+    shell: /opt/bin/scli --query_all_volumes  --use_nonsecure_communication
+    register: result
+  - debug: var=result.stdout_lines
+
+  - name: Query All Report Data
+    shell: /opt/bin/scli --query_all  --use_nonsecure_communication
+    register: result
+    failed_when: '"nodes have connection state ''Disconnected''" in result.stdout'
+  - debug: var=result.stdout_lines
+

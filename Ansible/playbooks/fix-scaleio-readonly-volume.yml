@@ -1,0 +1,88 @@
+--- # provide sdc IP, mdm IP, vol,  mpoint and hosts
+- hosts: "{{sdc}}"
+  become: true 
+  tasks:
+
+  - set_fact: mount_file={{ mpoint | regex_replace('^[\/]{1}') | replace("/","-") }}.mount
+  
+  - name: Disable disk mount service file
+    shell: "{{item}}"
+    with_items:
+      - systemctl disable /etc/systemd/system/{{mount_file}}
+      - systemctl daemon-reload
+    ignore_errors: true
+  
+  - name: unmount volume
+    shell: sudo umount {{ mpoint}}
+    ignore_errors: true
+
+
+  - name: Remove disk mount service file
+    file: path=/etc/systemd/system/{{mount_file}} state=absent
+    register: result
+  - debug: msg=result.stdout_lines
+
+- hosts: "{{mdm}}"
+  user: montana
+  become: true
+  tasks:
+  
+  - name: Un-map and re-map volume
+    shell: "{{item}}"
+    with_items:
+    - /opt/bin/scli --login --username **getFromSecrets**  --password **getFromSecrets**  --use_nonsecure_communication
+    - /opt/bin/scli --unmap_volume_from_sdc --volume_name {{vol}}  --sdc_ip {{sdc}}  --i_am_sure --use_nonsecure_communication
+    - /opt/bin/scli --map_volume_to_sdc --volume_name {{vol}} --sdc_ip {{sdc}} --use_nonsecure_communication
+    register: result
+    ignore_errors: true
+  - debug: var=result.stdout_lines
+
+  - name: Get ScaleIO Volume ID
+    shell: /opt/bin/scli --query_volume --volume_name {{vol}} --use_nonsecure_communication | grep "Volume ID" | cut -d ' ' -f4 
+    register: volid
+    run_once: true
+  - debug: var=volid.stdout
+  
+  - set_fact: VolumeID={{volid.stdout}} 
+
+  - pause: seconds=3
+
+#SDC Related Tasks
+- hosts: "{{sdc}}"
+  become: true
+  tasks:
+  - name: Get disk info from SDS
+    #shell: "ls  /dev/disk/by-id/*{{hostvars['10.200.107.1'].VolumeID}}"
+    shell: "ls  /dev/disk/by-id/*{{hostvars['10.200.73.1'].VolumeID}}"
+    register: diskid
+    ignore_errors: true
+  - debug: var=diskid.stdout
+ 
+  #- set_fact: dsize={{size}}000
+  - set_fact: mount_file={{ mpoint | regex_replace('^[\/]{1}') | replace("/","-") }}.mount  
+
+  - name: Create mount file
+    copy: src=files/opt-montana-logging-elasticsearch-data.mount  dest=/etc/systemd/system/{{mount_file}}
+
+  - name: Edit mount file
+    ini_file: dest=/etc/systemd/system/{{mount_file}}  section={{item.section}} option={{item.option}} value={{item.value}} 
+    with_items:
+     - { section: 'Mount', option: 'What'  , value: '{{diskid.stdout}}-part1' }  
+     - { section: 'Mount', option: 'Where' , value: '{{mpoint}}' } 
+
+  #- name: Run fsck on the disk volume
+  #  shell: sudo fsck {{diskid.stdout}}-part1
+  #  register: result
+  #- debug: var=result.stdout
+
+#  - name: Make directory
+#    file: path={{mpoint}}  state=directory owner=montana group=montana 
+
+  - name: Enable mount file srvice
+    shell: "{{item}}"
+    with_items: 
+      - systemctl daemon-reload
+      - systemctl enable /etc/systemd/system/{{mount_file}}
+      - systemctl start {{mount_file}}
+
+

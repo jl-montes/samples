@@ -1,0 +1,8 @@
+{
+	"provision_server_ip" : "10.100.33.1",
+	"quagga_version"      : "mon-quagga:release-2.3-master-5",
+	"monitor_version"     : "mon-fr-monitor:release-2.3",
+	"dynamicfw_version"   : "mon-dynamicfw:release-2.3",
+	"poller_version"      :	"mon-poller:release-2.3",
+	"pipework_version"    :	"mon-pipework:release-2.3"
+}

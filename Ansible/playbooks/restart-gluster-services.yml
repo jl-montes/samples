@@ -1,0 +1,13 @@
+---
+- hosts: irvlab
+  user: montana
+  #become: yes
+  tasks:
+  - name: Restart Gluster services individually
+    script: files/restart-gluster-services.sh
+    register: result
+  - debug: var=result.stdout_lines
+ #- name: Restart Gluster services individually
+  #  shell: fleetctl stop gluster_deploy_test@1.service;fleetctl start gluster_deploy_test@1.service
+  #  register: result
+  #- debug: var=result.stdout_lines

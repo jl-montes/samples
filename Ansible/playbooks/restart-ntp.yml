@@ -1,0 +1,13 @@
+---
+- hosts: "{{hosts}}"
+  become: true 
+  
+  tasks:
+
+  - name: Restart NTP daemon 
+    service: name=ntpd state=restarted
+    register: result
+
+  - debug: var=result.stdout
+    #when: result.rc != 0
+

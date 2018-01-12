@@ -1,0 +1,15 @@
+---
+- hosts: "{{hosts}}"
+  become: true 
+  
+  tasks:
+
+  - name:  Verify journalctl 
+    shell: journalctl --verify
+    register: result
+    #failed_when: '"NTP synchronized: no" in result.stdout'
+    ignore_errors: true 
+
+  - debug: var=result.stdout_lines
+    #when: '"NTP synchronized: no" in result.stdout'
+

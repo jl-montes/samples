@@ -1,0 +1,14 @@
+  - name: Start haproxy service if not running 
+    service: name=haproxy state=started 
+    register: result
+  
+  - name: scan journalctl for recent haproxy flapping issues related to Docker daemon issues
+    shell: sudo journalctl -u docker -n 30  | grep -e 'montana-haproxy\" is already in use by container'
+    register: result
+    failed_when: '"is already in use by container" in result.stdout'
+
+  - name: Restart Docker service if haproxy restarts are hung causing haproxy flapping
+    service: name=ntpd state=restarted 
+    when: '"is already in use by container" in result.stdout'
+    ignore_errors: true
+

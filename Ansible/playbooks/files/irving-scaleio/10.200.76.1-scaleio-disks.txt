@@ -1,0 +1,6 @@
+/dev/disk/by-id/ssd-3614187703084af001e0aba61067b2ed7
+/dev/disk/by-id/ssd-3614187703084af001e0abb021013a1f8
+/dev/disk/by-id/hdd-3614187703084af001e0abb8a182f4fa2
+/dev/disk/by-id/hdd-3614187703084af001e0abc10202ba753
+/dev/disk/by-id/hdd-3614187703084af001e0abd42326c1164
+/dev/disk/by-id/hdd-3614187703084af001e0abdbb39a93d06

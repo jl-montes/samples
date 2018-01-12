@@ -1,0 +1,12 @@
+---
+- hosts: irlk-mgmnt:irlk-mgmnt2
+  become: true 
+  
+  tasks:
+
+  - name: Ensure time service is running 
+    systemd: state=started  name=systemd-timesyncd
+
+  - name: Start NTP service if not running 
+    service: name=ntpd state=started 
+

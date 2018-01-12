@@ -1,0 +1,13 @@
+---
+#- hosts: 10.200.107.1
+- hosts: 10.200.73.1:10.200.107.1
+  user: montana
+  become: yes
+  gather_facts: false
+
+  tasks:
+  - name: Collect ScaleIO Reporting informaion from an MDM node
+    script: files/scaleio-mdm-report-2.0.sh
+    register: result
+    ignore_errors: true
+  - debug: var=result.stdout_lines

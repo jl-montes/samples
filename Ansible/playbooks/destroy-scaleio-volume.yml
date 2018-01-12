@@ -1,0 +1,40 @@
+---
+
+- hosts: "{{sdc}}"
+  become: true 
+  tasks:
+
+  - set_fact: mount_file={{ mpoint | regex_replace('^[\/]{1}') | replace("/","-") }}.mount
+  
+  - name: Disable disk mount service file
+    shell: "{{item}}"
+    with_items:
+      - systemctl disable /etc/systemd/system/{{mount_file}}
+      - systemctl daemon-reload
+    ignore_errors: true
+
+  - name: Remove disk mount service file
+    file: path=/etc/systemd/system/{{mount_file}} state=absent
+    register: result
+  - debug: msg=result.stdout_lines
+
+  - name: Unmount disk volume
+    shell: sudo umount {{ mpoint}}
+    ignore_errors: true
+
+# This is the Primary MDM node
+- hosts:  "{{mdm}}"
+#- hosts:  10.200.73.1
+  user: montana
+  become: true
+  tasks:
+  - name: Un-map and remove volume
+    shell: "{{item}}"
+    with_items:
+    - /opt/bin/scli --login --username **getFromSecrets** --password **getFromSecrets**  --use_nonsecure_communication
+    - /opt/bin/scli --unmap_volume_from_sdc --volume_name {{vol}}  --sdc_ip {{sdc}}  --i_am_sure --use_nonsecure_communication
+    - /opt/bin/scli --remove_volume --volume_name {{vol}} --i_am_sure --use_nonsecure_communication
+    register: result
+    ignore_errors: true
+  - debug: var=result.stdout_lines
+

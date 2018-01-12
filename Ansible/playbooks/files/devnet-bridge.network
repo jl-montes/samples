@@ -1,0 +1,8 @@
+[Match]
+Name=cbr1
+
+[Network]
+Address={{devnet_ip}}
+Gateway=198.159.192.1
+DNS=166.68.227.10
+DNS=166.68.195.10

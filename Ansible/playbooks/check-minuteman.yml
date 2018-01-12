@@ -1,0 +1,27 @@
+---
+- hosts: "{{hosts}}"
+  remote_user: montana
+  #become: true 
+  
+  tasks:
+
+  - name: Get DCOS version
+    shell:  cat /opt/mesosphere/environment | grep DCOS_VERSION  | awk -F '=' '{print $2}'
+    register: result
+  - debug: var=result.stdout_lines
+  - set_fact: DCOS_VERSION=result.stdout_lines 
+
+  - name: Enable/Start minuteman service
+    systemd: name=dcos-minuteman.service state=started  enabled=yes
+    register: result
+    when: '"1.8" in DCOS_VERSION'
+  
+  - name: Shutdown minuteman service
+    systemd: name=dcos-minuteman.service state=stopped enabled=no
+    register: result
+    when: '"1.7" in DCOS_VERSION'
+
+  - debug: var=result.stdout
+
+
+

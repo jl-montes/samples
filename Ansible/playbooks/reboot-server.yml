@@ -1,0 +1,9 @@
+---
+- hosts: "{{hosts}}"
+  gather_facts: false
+  become: true
+  tasks:
+ 
+  - name: reboot server
+    shell: /sbin/reboot     
+
